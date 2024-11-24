@@ -52,9 +52,15 @@ public class CharController : MonoBehaviour
     private float dashDistance = 1f;
     private float dashDuration = 0.15f;
     public float dashCoolDown = 5f;
+    
+    void Awake() {
+        health = maxHealth;
+    }
+    
+    
     void Start()
     {
-        health = maxHealth;
+        Debug.Log("Player health: " + health);
         fpsCamera.fieldOfView = initFov;
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -64,6 +70,7 @@ public class CharController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Player health: " + health);
         //Camera
         if (canMove) {
             rotation += -lookInput.y * lookSeed;
@@ -152,7 +159,10 @@ public class CharController : MonoBehaviour
     }
 
     public void TakeDamage(float damage) {
+        Debug.Log("Player health befor hit: " + health);
         health -= damage;
+        Debug.Log("Player took damage: " + damage);
+        Debug.Log("Player health: " + health);
         playerHealthBar.SetPlayerHealthBarSize(health / maxHealth);
         if (health <= 0) {
             Die();

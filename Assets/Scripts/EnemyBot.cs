@@ -11,13 +11,13 @@ public class EnemyBot : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
     UIHealthBar healthBar;
     private NavMeshAgent agent;
+    public float maxHealth = 100f;
     private float health;
     RagdollManagerEnemy ragdollManager;
     public CharController playerScript;
     public GameObject weapon;
 
     [Header("Enemy Stats")]
-    public float maxHealth = 100f;
     public float dieForce = 10f;
 
     [Header("Enemy States")]
@@ -39,6 +39,7 @@ public class EnemyBot : MonoBehaviour
 
 
     void Awake() {
+        health = maxHealth;
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("Character").transform;
         animator = GetComponentInChildren<Animator>();
@@ -46,6 +47,7 @@ public class EnemyBot : MonoBehaviour
 
     void Start()
     {
+        animator.SetBool("isMoving", true);
         //playerScript = GetComponent<CharController>();
         ragdollManager = GetComponent<RagdollManagerEnemy>();
         healthBar = GetComponentInChildren<UIHealthBar>();
@@ -56,7 +58,6 @@ public class EnemyBot : MonoBehaviour
             hitBox.bot = this;
 
         }
-        health = maxHealth;
         healthBar.gameObject.SetActive(false);
     }
 
@@ -88,6 +89,8 @@ public class EnemyBot : MonoBehaviour
     }
 
     public void TakeDamage(float damage, Vector3 direction) {
+        animator.SetBool("isMoving", false);
+        agent.isStopped = true;
         healthBar.gameObject.SetActive(true);
         animator.SetInteger("ImpactIndex", Random.Range(0, 2));
         animator.SetTrigger("Impact");
@@ -95,8 +98,16 @@ public class EnemyBot : MonoBehaviour
         healthBar.SetHealthBarSize(health/ maxHealth);
         if (health <= 0) {
             Debug.Log("Dead");
-             HandleDeath(direction);
+            HandleDeath(direction);
         }
+        float length = animator.GetCurrentAnimatorStateInfo(0).length;
+        Debug.Log("Length: " + length);
+        Invoke(nameof(ResetHit), length);
+    }
+
+    private void ResetHit() {
+        animator.SetBool("isMoving", true);
+        agent.isStopped = false;
     }
 
     private void HandleDeath(Vector3 direction) {
