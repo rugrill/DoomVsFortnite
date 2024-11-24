@@ -14,7 +14,6 @@ public class EnemyBot : MonoBehaviour
     public float maxHealth = 100f;
     private float health;
     RagdollManagerEnemy ragdollManager;
-    public CharController playerScript;
     public GameObject weapon;
 
     [Header("Enemy Stats")]
@@ -210,7 +209,7 @@ public class EnemyBot : MonoBehaviour
                     break;
             }   
             Debug.Log("AI Dealing Damage: " + damage);
-            playerScript.TakeDamage(damage);
+            CharController.Instance.TakeDamage(damage);
         }   
 
     }

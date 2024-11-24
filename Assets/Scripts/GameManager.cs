@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public string gameSceneName = "EndScene";
    
    
-    private void Awake()
+    void Awake()
     {
         if (Instance == null)
         {

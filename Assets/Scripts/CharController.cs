@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class CharController : MonoBehaviour
 {
+    public static CharController Instance { get; private set; }
     public bool canMove = true;
     public bool isSprinting = false;
     private bool isDashing = false;
@@ -53,8 +54,26 @@ public class CharController : MonoBehaviour
     private float dashDuration = 0.15f;
     public float dashCoolDown = 5f;
     
-    void Awake() {
+   void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject); // Ensures there's only one instance
+        }
         health = maxHealth;
+    }
+
+    void OnDestroy()
+    {
+        // Cleanup the instance when the object is destroyed
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
     
     
@@ -70,7 +89,6 @@ public class CharController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Player health: " + health);
         //Camera
         if (canMove) {
             rotation += -lookInput.y * lookSeed;
